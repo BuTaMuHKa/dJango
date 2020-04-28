@@ -1,0 +1,12 @@
+{% extends 'layout/basic.html' %}
+{% block title %}
+<h1>Регистрация пользователя</h1>
+{% endblock title %}
+{% block content %}
+<h1>Заполните все поля для регистрации</h1>
+<form method="POST" class="from-group">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <button type="submit" class="btn btn-success">Login</button>
+</form>
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% extends "layout/basic.html" %}
+
+{% block title %}{{ current_rubric.name }}{% endblock %}
+
+{% block content %}
+<h2>Рубрика: {{ current_rubric.name }}</h2>
+
+{% for bd in bds %}
+<div class="">
+	<h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
+	<p>{{ bd.content }}</p>
+	<p>{{ bd.published|date:"d.m.Y H:i:s" }}</p>
+	{% if user.is_authenticated %}
+		<p><a href="{% url 'bboard:update' pk=bd.pk %}">Изменить</a></p>
+		<p><a href="{% url 'bboard:delete' pk=bd.pk %}">Удалить</a></p>
+	{% endif %}
+	
+	<p><a href="{% url 'bboard:by_rubric' bd.rubric.pk %}">{{ bd.rubric.name }}</a></p>
+</div>
+{% endfor %}
+{% endblock %}

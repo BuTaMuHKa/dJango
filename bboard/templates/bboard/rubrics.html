@@ -1,0 +1,12 @@
+{% extends 'layout/basic.html' %}
+
+{% block title %}Изменить рубрику{% endblock %}
+
+{% block content %}
+<h2>Изменить/Добавить/Удалить рубрику</h2>
+<form  action="{% url 'bboard:rub_delete'  %}" method="POST">
+	{% csrf_token %}
+	{{ formset.as_p }}
+	<input type="submit" value="Применить">
+</form>
+{% endblock %}

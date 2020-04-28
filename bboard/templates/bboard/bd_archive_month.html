@@ -1,0 +1,12 @@
+{% extends 'layout/basic.html' %}
+
+{% block contex %}
+{% for bd in object_list %}
+<div class="b">
+	<h1><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.year }}</a></h1>
+	<p>{{ bd.content }}</p>
+	<p><a href="{% url 'bboard:update' pk=bd.pk %}">Изменить</a></p>
+	<p><a href="{% url 'bboard:delete' pk=bd.pk %}">Удалить</a></p>
+{% endfor %}
+	
+{% endblock contex %}

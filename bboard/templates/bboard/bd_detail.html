@@ -1,0 +1,32 @@
+{% extends "layout/basic.html" %}
+{% load my_templatetags %}
+{% load bbcode_tags %}
+
+{% block title %}{{ bd.title }}{% endblock %}
+{% block content %}
+
+<div class="card mb-3" style="max-width: 540px;">
+  <div class="row no-gutters">
+    <div class="col-md-4">
+      <img src="\static\bboard\1s-tovary_logo.bmp" class="card-img" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{ bd.title }}</h5>
+        <p class="card-text">{{ bd.content|bbcode|safe }}</p>
+        <p class="card-text">{{ bd.price|currency }}</p>
+        <p class="card-text">Дата: {{ bd.published|date:"d.m.Y H:i:s" }}</p>
+      </div>
+    </div>
+
+    <div>Hello how are you</div>
+
+    {% if user.is_superuser %}
+      <a href="{% url 'bboard:update' pk=bd.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Изменить</a>
+      <a href="{% url 'bboard:delete' pk=bd.pk %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">удалить</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock content %}
+

@@ -1,0 +1,8 @@
+{% extends 'layout/basic.html' %}
+
+{% block title %}Вход на сайт
+{% endblock title %}
+{% block content %}
+<h1>Пожалуста войдите в систему</h1>
+<a href="{% url 'bboard:login' %}"><input type='submit' value='Авторизация/Регистрация'></a>
+{% endblock content %}

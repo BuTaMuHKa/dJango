@@ -1,0 +1,12 @@
+{% extends "layout/basic.html" %}
+
+{% block title %}Изменить объявление{% endblock %}
+
+{% block content %}
+<h2>Добавление объявления</h2>
+<form  action="{% url 'bboard:add' %}" method="POST">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="Изменить" class="btn btn-success">
+</form>
+{% endblock %}

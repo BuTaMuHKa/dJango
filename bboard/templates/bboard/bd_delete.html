@@ -1,0 +1,15 @@
+{% extends 'layout/basic.html' %}
+
+{% block title %}Удаление товара {{ bd.title }}{% endblock title %}
+
+{% block content %}
+<h1>Удаление записи</h1>
+<p>Рубрика: {{ bd.rubric.name }}</p>
+<p>Товар: {{ bd.title }}</p> 
+<p>Описание: {{ bd.content }}</p>
+<p>Цена: {{ bd.price }}</p>
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Удаление" class="btn btn-success">
+</form>
+{% endblock content %}
