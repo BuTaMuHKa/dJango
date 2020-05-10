@@ -1,21 +1,48 @@
 {% extends "layout/basic.html" %}
-
+{% load thumbnail %}
 {% block title %}{{ current_rubric.name }}{% endblock %}
 
 {% block content %}
 <h2>Рубрика: {{ current_rubric.name }}</h2>
 
-{% for bd in bds %}
-<div class="">
-	<h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
-	<p>{{ bd.content }}</p>
-	<p>{{ bd.published|date:"d.m.Y H:i:s" }}</p>
-	{% if user.is_authenticated %}
-		<p><a href="{% url 'bboard:update' pk=bd.pk %}">Изменить</a></p>
-		<p><a href="{% url 'bboard:delete' pk=bd.pk %}">Удалить</a></p>
-	{% endif %}
-	
-	<p><a href="{% url 'bboard:by_rubric' bd.rubric.pk %}">{{ bd.rubric.name }}</a></p>
+{% comment %} <div class="card mb-3" style="max-width: 540px;">
+  {% for bd in bds %}
+  <img  width="400" height="400" src="{{ bd.photo|thumbnail_url:'my_size' }}" class="img-thumbnail" alt="...">
+  <div class="row no-gutters">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
+	    	<p>{{ bd.content }}</p>
+		    <p>{{ bd.published|date:"d.m.Y H:i:s" }}</p>
+        <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
+        <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
+      </div>
+    </div>
+  </div> <br>
+  {% endfor %}
+</div> {% endcomment %}
+
+<div class="row row-cols-1 row-cols-md-3">
+  {% for bd in bds %}
+    <div class="col mb-4">
+      <div class="card">
+        {% if bd.photo %}
+          <img  src="{{ bd.photo|thumbnail_url:'default' }}" class="card-img-top">
+        {% else %}
+          <img src="...">
+        {% endif %}
+          <div class="card-body">
+            <h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
+            <p>{{ bd.content }}</p>
+            <p>{{ bd.published|date:"d.m.Y H:i:s" }}</p>
+            <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
+            <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
+          </div>
+      </div>
+    </div>
+  {% endfor %}
 </div>
-{% endfor %}
+
 {% endblock %}

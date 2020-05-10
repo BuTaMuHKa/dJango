@@ -1,42 +1,45 @@
 {% extends "layout/basic.html" %}
+{% load thumbnail %}
 
 {% block content %}
 
-<div class="card mb-3" style="max-width: 540px;">
+<div class="row row-cols-1 row-cols-md-3">
   {% for bd in bds %}
-  <div class="row no-gutters">
-    <div class="col-md-4">
-      <img src="\static\bboard\1s-tovary_logo.bmp" class="card-img" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">{{ bd.title }}</h5>
-        <p class="card-text">{{ bd.content }}</p>
-        <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
-        <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
+    <div class="col mb-4">
+      <div class="card">
+        {% if bd.photo %}
+          <img src="{{ bd.photo|thumbnail_url:'default' }}" class="card-img-top">
+        {% else %}
+          <img src="...">
+        {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ bd.title }}</h5>
+            <p class="card-text">{{ bd.content }}</p>
+            <p class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</p>
+            <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
+          </div>
       </div>
     </div>
-  </div> <br>
   {% endfor %}
 </div>
+<ul>
+  <div class="pagination">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+          {% if page.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page=1">Начало</a></li>
+              {% comment %} <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Назад</a></li> {% endcomment %}
+          {% endif %}
 
-<div class="pagination">
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-        {% if page.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page=1">Начало</a></li>
-            {% comment %} <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Назад</a></li> {% endcomment %}
-        {% endif %}
-
-        {% for number in page.paginator.page_range %}
-          <li class="page-item"><a class="page-link active" href="?page={{ number }}">{{  number  }}</a></li>
-        {% endfor %}
-        {% if page.has_next %}
-            {% comment %} <li class="page-item"><a href="?page={{ page.next_page_number }}" class="page-link">Далее</a></li> {% endcomment %}
-            <li class="page-item"><a href="?page={{ page.paginator.num_pages }}" class="page-link">Конец</a></li>
-        {% endif %}
-    </ul>
-  </nav>
-</div>
-
+          {% for number in page.paginator.page_range %}
+            <li class="page-item"><a class="page-link active" href="?page={{ number }}">{{  number  }}</a></li>
+          {% endfor %}
+          {% if page.has_next %}
+              {% comment %} <li class="page-item"><a href="?page={{ page.next_page_number }}" class="page-link">Далее</a></li> {% endcomment %}
+              <li class="page-item"><a href="?page={{ page.paginator.num_pages }}" class="page-link">Конец</a></li>
+          {% endif %}
+      </ul>
+    </nav>
+  </div>
+</ul>
 {% endblock %}

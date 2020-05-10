@@ -1,0 +1,12 @@
+{% extends 'layout/basic.html' %}
+
+{% block title %}
+Вывод файлов
+{% endblock title %}
+
+{% block content %}
+    {% for img in imgs %}
+        <div><img src="{{ img.img.url }}"></div>
+        <div><a href="{{ 'img' }}">Загрузить картинку</a></div>
+    {% endfor %}
+{% endblock content %}

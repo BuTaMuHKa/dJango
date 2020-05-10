@@ -5,17 +5,9 @@ from django.core import validators
 from django.forms import modelform_factory, DecimalField, formset_factory
 from django.forms.widgets import Select
 from django.core.exceptions import ValidationError
-from captcha.fields import CaptchaField
+#from captcha.fields import CaptchaField
 
-from .models import Bd, Rubric
-
-#Фабрика формы, она не хранится в памяти, хороша только тогда когда нужно вызвать редкую форму 
-# BdForm = modelform_factory(Bd,
-# 	fields = ('title', 'content', 'price', 'rubric'),
-# 	labels = {'title':'Название товара'},
-# 	help_texts = {'rubric':'Не забудьте рубрику'},
-# 	field_classes = {'price': DecimalField},
-# 	widgets = {'rubric': Select(attrs={'size':5})})
+from .models import Bd, Rubric, Img, File
 
 # Форма связанная с моделю хранится в памяти и полезно для постоянного вызова формы
 class BdForm(forms.ModelForm):
@@ -26,7 +18,15 @@ class BdForm(forms.ModelForm):
 			widget = forms.widgets.Textarea())
 	price = forms.DecimalField(label = 'Цена', decimal_places=2)
 	rubric = forms.ModelChoiceField(queryset=Rubric.objects.all(),
-			label = 'Рубрика', help_text = 'Не забудьте Рубрику')	
+			label = 'Рубрика', help_text = 'Не забудьте Рубрику')
+	photo = forms.ImageField(
+		label='Изображение',
+		validators=[validators.FileExtensionValidator(
+		allowed_extensions=('gif', 'jpg', 'png'))],
+		error_messages={'invalid_extension':'Этот формат файлов'+\
+			'не поддерживается'},
+		widget=forms.widgets.ClearableFileInput(attrs={'multiple':True}))
+
 	def clean(self):
 		super().clean()
 		errors = {}
@@ -36,20 +36,10 @@ class BdForm(forms.ModelForm):
 			errors['price'] = ValidationError('Цена не может быть отрицательная')
 		elif errors:
 			raise ValidationError(errors)
-	captcha = CaptchaField()
+	#captcha = CaptchaField()
 	class Meta:
 		model = Bd
-		fields = ('title', 'content', 'price', 'rubric')
-
-# Форма связанная с моделю при котором c быстрыми полями формы похож на 1 способ
-# class BdForm (ModelForm):
-# 	class Meta:
-# 		model = ВЬ
-# 		fields = ('title', 'content', 'price', 'rubric')
-# 		labels = {'title': 'Название товара!'}
-# 		help_texts = {'rubric': 'Не забудьте задать рубрику!'}
-# 		field_classes = {'price': DecirnalField}
-# 		widgets = {'rubric': Select(attrs= { 'size' : 8})}
+		fields = ('title', 'content', 'price', 'rubric', 'photo')
 
 # Форма регистрации для пользователя(контролер и модель пока отсутсвует)
 class RegisterForm(UserCreationForm):
@@ -58,17 +48,29 @@ class RegisterForm(UserCreationForm):
 		model = User
 		fields = ["username", "email", "password1", "password2"]
 
-# class AuthenticationUserForm(forms.ModelForm):
-# 	login = forms.CharField(label='Логин')
-# 	password = forms.CharField(label='Пароль')
-# 	class Meta:
-# 		model = User
-# 		fields = ('login', 'password')
-
 #Форма не связаная с моделью
 class SearchForm(forms.Form):
-	keyword = forms.CharField(max_length=20, label='Искаемое слово')
-	rubric = forms.ModelChoiceField(queryset=Rubric.objects.all(), label='Рубрика')
+	keyword = forms.CharField(max_length=20, label='', error_messages={'required': ''})
+
+# class ImgNotModelForm(forms.Form):
+# 	img = forms.ImageField(
+# 		label='Изображение',
+# 		validators=[validators.FileExtensionValidator(
+# 		allowed_extensions=('gif', 'jpg', 'png')
+# 		)],
+# 		error_messages={'invalid_extension':'Этот формат файлов'+\
+# 		'не поддерживается'},
+# 		widget=forms.widgets.ClearableFileInput(attrs={'multiple':True}))
+# 	bd_id = forms.ModelChoiceField(
+# 		queryset = Bd.objects.get(pk=later))	
+
+class FileForm(forms.ModelForm):
+	img = forms.FileField(
+		label='Файл')
+	desc = forms.CharField(label='Описание', widget=forms.widgets.Textarea())
+	class Meta:
+		model = Img
+		fields = '__all__'
 
 #Фабрика формы не связаная с моделью
 fs = formset_factory(SearchForm, extra = 3, can_delete = True)

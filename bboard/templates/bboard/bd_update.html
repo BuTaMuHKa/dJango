@@ -1,12 +1,13 @@
 {% extends "layout/basic.html" %}
+{% load bootstrap4 %}
 
 {% block title %}Изменить объявление{% endblock %}
 
 {% block content %}
-<h2>Добавление объявления</h2>
-<form  action="{% url 'bboard:add' %}" method="POST">
+<h2>Реактирование</h2>
+<form  method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
-	{{ form.as_p }}
+	{% bootstrap_form form %}
 	<input type="submit" value="Изменить" class="btn btn-success">
 </form>
 {% endblock %}

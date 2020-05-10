@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from django.core.mail.backends.console import EmailBackend
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -28,6 +29,41 @@ DEBUG = True
 
 LOGIN_REDIRECT_URL = 'bboard:index'
 
+#Мои настройки 
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+# print ("base dir path", BASE_DIR)
+
+THUMBNAIL_ALIASES = {
+    'bboard.Bd.photo': {
+        'default': {
+            'size': (500, 300),
+            'crop': 'scale', 
+        },
+        'my_size':{
+            'size':(1000, 1200),
+            'crop': 'smart',
+        }
+    },
+    'testapp':{
+        'default':{
+            'size': ( 400, 300 ),
+            'crop': 'smart',
+            'bw' : True,
+        },
+    },
+    '':{
+        'default':{
+            'size':(180, 240),
+            'crope':'scale',
+        },
+        'big':{
+            'size': (480, 640),
+            'crop': '10,10',
+        },
+    },
+}
 
 # Application definition
 
@@ -42,7 +78,7 @@ INSTALLED_APPS = [
     'captcha',
     'precise_bbcode',
     'bootstrap4',
-    
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [

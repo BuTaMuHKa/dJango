@@ -6,10 +6,9 @@
 {% block content %}
 <h2>Добавление объявления</h2>
 <div class='form_group_class'>
-	<form  action="{% url 'bboard:add' %}" method="POST">
+	<form  action="{% url 'bboard:add' %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		{% bootstrap_form form %}
-		{% comment %} {{ form.as_p }} {% endcomment %}
 		<input type="submit" value="Создать" class="btn btn-success">
 	</form>
 </div>

@@ -1,12 +1,15 @@
 from django.urls import path, reverse_lazy
+from django.contrib import admin
 from django.contrib.auth.views import ( LoginView,LogoutView,
 	PasswordChangeView, PasswordChangeDoneView, PasswordResetView,
 	PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView)
 from .views import (add_and_save, update, detail,
-	by_rubric, index, delete, rubric, registerUser)
+	by_rubric, index, delete, rubric, registerUser, showfiles, search)
 
 app_name = 'bboard'
 urlpatterns = [
+	path('search/', search, name='search'),
+	path('showfiles/', showfiles, name='showfiles'),
 	path('add/', add_and_save,
 		name='add'),
 	path('update/<int:pk>/', update,
@@ -49,5 +52,6 @@ urlpatterns = [
 		name='password_reset_complete'),
 	path('register_user/', registerUser,
 		name='register'),
+	# path('img/', addimg, name='img'),
 	path('', index, name='index'),
 ]
