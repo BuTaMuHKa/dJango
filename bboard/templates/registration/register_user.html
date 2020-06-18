@@ -1,12 +1,16 @@
 {% extends 'layout/basic.html' %}
 {% block title %}
-<h1>Регистрация пользователя</h1>
+Регистрация пользователя
 {% endblock title %}
+
 {% block content %}
 <h1>Заполните все поля для регистрации</h1>
 <form method="POST" class="from-group">
     {% csrf_token %}
     {{ form.as_p}}
     <button type="submit" class="btn btn-success">Login</button>
+    {% comment %} <li class="google">
+        <a href="{% url "social:begin" "google" %}">Login with Google</a>
+    </li> {% endcomment %}
 </form>
 {% endblock content %}

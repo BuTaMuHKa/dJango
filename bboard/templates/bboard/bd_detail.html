@@ -14,9 +14,11 @@
     <p class="card-text">Дата: {{ bd.published|date:"d.m.Y H:i:s" }}</p>
   </div>
     {% if user.is_superuser %}
-      <ul><a href="{% url 'bboard:update' pk=bd.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Изменить</a></ul>
-      <ul><a href="{% url 'bboard:delete' pk=bd.pk %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">удалить</a></ul>
+      <ul><a href="{% url 'bboard:update' pk=bd.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Изменить</a></ul> 
+      <ul><a href="{% url 'bboard:delete' pk=bd.pk %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Удалить Запись</a></ul>
+      {% comment %} <ul><a href="{% url 'bboard:deleteimg' pk=bd.pk %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Удалить Фото</a></ul> {% endcomment %}
     {% endif %}
+    <p>Эту страницу просмторели {{ visits }}</p>
 </div>
 {% endblock content %}
 

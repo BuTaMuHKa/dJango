@@ -1,5 +1,6 @@
 {% extends "layout/basic.html" %}
 {% load bootstrap4 %}
+{% load crispy_forms_tags %}
 
 {% block title %}Добавить объявление{% endblock %}
 
@@ -8,7 +9,7 @@
 <div class='form_group_class'>
 	<form  action="{% url 'bboard:add' %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
-		{% bootstrap_form form %}
+		{{ form|crispy }}
 		<input type="submit" value="Создать" class="btn btn-success">
 	</form>
 </div>

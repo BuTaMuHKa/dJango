@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from django.core.mail.backends.console import EmailBackend
-
+#from django.contrib.auth.backends import ModelBackend 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,6 +35,38 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 # print ("base dir path", BASE_DIR)
 
+# def make_key(key, key_prefix, version):
+#     return ':'.join([key_prefix, str(version), key])
+
+#Кэш
+CACHES = {
+    'default':{
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+        'TIMEOUT': 120,
+        'OPTION': {
+            'MAX_ENTRIES': 200
+        }
+    }
+    # 'special':{
+    #     'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
+    #     'LOCATION':'cache2',
+    # }
+}
+#Настройки почты
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = [
+    {
+        'EMAIL_HOST': 'smtp.mail.ru',
+        'EMAIL_PORT':'465',
+        'EMAIL_USE_TLS': True,
+        'EMAIL_HOST_USER':'klass-1-90@mail.ru',
+        'EMAIL_HOST_PASSWORD':'BuTaJIuK_23061997_',
+    }
+]
+
+
+#Алиасы для вывода картинок бесполезная хрень
 THUMBNAIL_ALIASES = {
     'bboard.Bd.photo': {
         'default': {
@@ -66,7 +98,6 @@ THUMBNAIL_ALIASES = {
 }
 
 # Application definition
-
 INSTALLED_APPS = [
     'bboard.apps.BboardConfig',
     'django.contrib.admin',
@@ -79,17 +110,39 @@ INSTALLED_APPS = [
     'precise_bbcode',
     'bootstrap4',
     'easy_thumbnails',
+    'django_cleanup',
+    'social_django',
+    'sslserver',
+    'crispy_forms',
 ]
+
+#пакет bootstrap
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
+
+
+#Логика работы сессий
+# SESSION_ENGINE = [
+#     'django.contrib.sessions.backends.db',
+# ]
+
+#Теги для вывода в шаблон
+#CRITICAL = 50
+# MESSAGE_TAGS = {
+# 	CRITICAL:'critical',
+# }
 
 ROOT_URLCONF = 'samplesite.urls'
 
@@ -154,7 +207,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOAuth',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.yahoo.YahooOpenId',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '521657183523-7kbnv1u8ffiuig81d2kvgmmti4tjasgq.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '0gptUDlpQCN1wQtUXNzCp_jd' 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 

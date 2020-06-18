@@ -4,10 +4,12 @@ from django.contrib.auth.views import ( LoginView,LogoutView,
 	PasswordChangeView, PasswordChangeDoneView, PasswordResetView,
 	PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView)
 from .views import (add_and_save, update, detail,
-	by_rubric, index, delete, rubric, registerUser, showfiles, search)
+	by_rubric, index, delete, rubric, registerUser, showfiles, search, deleteimg)
 
 app_name = 'bboard'
 urlpatterns = [
+	#path('deleteimg/<int:pk>/', deleteimg, name="deleteimg"),
+	#path('test_cookie/', test_cookie, name='test_cookie'),
 	path('search/', search, name='search'),
 	path('showfiles/', showfiles, name='showfiles'),
 	path('add/', add_and_save,
@@ -33,7 +35,6 @@ urlpatterns = [
 		name='password_change'),
 	path('accounts/password_change/done/', PasswordChangeDoneView.as_view(),
 		name='password_change_done'),
-
 	path('accounts/password_reset/', PasswordResetView.as_view(
 		success_url=(reverse_lazy('bboard:password_reset_done')),
 		template_name='registration/reset_password.html',
@@ -52,6 +53,5 @@ urlpatterns = [
 		name='password_reset_complete'),
 	path('register_user/', registerUser,
 		name='register'),
-	# path('img/', addimg, name='img'),
 	path('', index, name='index'),
 ]

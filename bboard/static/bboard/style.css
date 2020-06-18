@@ -1,3 +1,13 @@
 .selector-for-some-widget {
     box-sizing: content-box;
   }
+
+.conteiner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: center;
+}
+.pagination{
+  left: 40%;
+}

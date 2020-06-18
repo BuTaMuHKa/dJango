@@ -3,6 +3,7 @@
 {% load bootstrap4 %}
 {% load my_templatetags %}
 {% load thumbnail %}
+{% load cache %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +15,7 @@
 	<title>{% block title %}Главная{% endblock %} - Доска объявлений</title>
 </head>
 <body>
+	{% cache 300 navbar request.user.is_authenticated request.user.username%}
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 		<!-- Brand -->
 		<a class="navbar-brand" href="{% url 'bboard:index' %}"><img src="/static/bboard/bg1.jpg" style="width:64px;"></a>
@@ -64,8 +66,9 @@
 			</form>
 		</ul>
 	</nav>
+	{% endcache %}
 	<br>
-	<section>
+	<section class='container'>
 		{% block content %}
 		{% endblock %}
 	</section>

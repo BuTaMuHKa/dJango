@@ -42,8 +42,11 @@ class BdForm(forms.ModelForm):
 		fields = ('title', 'content', 'price', 'rubric', 'photo')
 
 # Форма регистрации для пользователя(контролер и модель пока отсутсвует)
-class RegisterForm(UserCreationForm):
-	email = forms.EmailField(label='Ваш почтовый адрес')
+class RegisterForm(forms.ModelForm):
+	username = forms.CharField(label='Ваше имя', required=False)
+	email = forms.EmailField(label='Ваш почтовый адрес', required=False )
+	password1 = forms.CharField(strip=False, label='Ваш пароль', required=False )
+	password2 = forms.CharField(strip=False, label='Повторите пароль', required=False)
 	class Meta:
 		model = User
 		fields = ["username", "email", "password1", "password2"]

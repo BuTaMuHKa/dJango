@@ -3,6 +3,7 @@
 
 {% block content %}
 
+<p>Просмотры страницы {{ visits}}</p>
 <div class="row row-cols-1 row-cols-md-3">
   {% for bd in bds %}
     <div class="col mb-4">
@@ -24,7 +25,7 @@
 </div>
 <ul>
   <div class="pagination">
-    <nav aria-label="Page navigation example">
+    {% comment %} <nav aria-label="Page navigation example"> {% endcomment %}
       <ul class="pagination">
           {% if page.has_previous %}
               <li class="page-item"><a class="page-link" href="?page=1">Начало</a></li>
@@ -39,7 +40,7 @@
               <li class="page-item"><a href="?page={{ page.paginator.num_pages }}" class="page-link">Конец</a></li>
           {% endif %}
       </ul>
-    </nav>
+    {% comment %} </nav> {% endcomment %}
   </div>
 </ul>
 {% endblock %}

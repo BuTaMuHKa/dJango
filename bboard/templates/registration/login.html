@@ -12,5 +12,6 @@
         <input type="hidden" name="next" value="{{ next }}">
         <input type="submit" value="Войти" class="btn btn-success">
     </form>
+    <a href="{% url "social:begin" "google-oauth2" %}">Google+</a>
 {% endif %}
 {% endblock content %}

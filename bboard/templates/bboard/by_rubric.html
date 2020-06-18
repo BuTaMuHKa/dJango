@@ -1,28 +1,20 @@
 {% extends "layout/basic.html" %}
 {% load thumbnail %}
 {% block title %}{{ current_rubric.name }}{% endblock %}
+{% load cache %}
 
 {% block content %}
 <h2>Рубрика: {{ current_rubric.name }}</h2>
 
-{% comment %} <div class="card mb-3" style="max-width: 540px;">
-  {% for bd in bds %}
-  <img  width="400" height="400" src="{{ bd.photo|thumbnail_url:'my_size' }}" class="img-thumbnail" alt="...">
-  <div class="row no-gutters">
-    <div class="col-md-4">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
-	    	<p>{{ bd.content }}</p>
-		    <p>{{ bd.published|date:"d.m.Y H:i:s" }}</p>
-        <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
-        <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
-      </div>
-    </div>
-  </div> <br>
-  {% endfor %}
-</div> {% endcomment %}
+{% if messages %}
+	<ul class="messages">
+	{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+		{{ message }}
+		</li>
+	{% endfor %}
+	</ul>
+{% endif %}
 
 <div class="row row-cols-1 row-cols-md-3">
   {% for bd in bds %}
