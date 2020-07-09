@@ -10,12 +10,11 @@
 <head>
 	{% bootstrap_css %}
 	{% bootstrap_javascript jquery='full' %}
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no", charce='utf8'>
 	<title>{% block title %}Главная{% endblock %} - Доска объявлений</title>
 </head>
 <body>
-	{% cache 300 navbar request.user.is_authenticated request.user.username%}
+	{% comment %} {% cache 300 navbar request.user.is_authenticated request.user.username%} {% endcomment %}
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 		<!-- Brand -->
 		<a class="navbar-brand" href="{% url 'bboard:index' %}"><img src="/static/bboard/bg1.jpg" style="width:64px;"></a>
@@ -61,12 +60,12 @@
 		<ul class="navbar-nav ml-auto">
 			<form class="form-inline my-2 my-lg-0" method="POST" action="{% url 'bboard:search' %}">
 				{% csrf_token %}
-				<input type="text" value="Поиск" class="">
-				<input type="submit" value="Поиск" class="btn btn-success">
+				<input class="form-control mr-sm-2" type="text" placeholder="Search" name="search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 			</form>
 		</ul>
 	</nav>
-	{% endcache %}
+	{% comment %} {% endcache %} {% endcomment %}
 	<br>
 	<section class='container'>
 		{% block content %}

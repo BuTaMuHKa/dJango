@@ -20,11 +20,11 @@
   {% for bd in bds %}
     <div class="col mb-4">
       <div class="card">
-        {% if bd.photo %}
-          <img  src="{{ bd.photo|thumbnail_url:'default' }}" class="card-img-top">
-        {% else %}
-          <img src="...">
+      {% for i in img %}
+        {% if i.bd_id == bd.pk %}
+          <img  src="{{ i.img|thumbnail_url:'default' }}" class="card-img-top">
         {% endif %}
+      {% endfor %}
           <div class="card-body">
             <h2><a href="{% url 'bboard:detail' pk=bd.pk %}">{{ bd.title }}</a></h2>
             <p>{{ bd.content }}</p>

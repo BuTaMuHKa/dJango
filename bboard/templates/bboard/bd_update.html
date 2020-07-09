@@ -1,14 +1,26 @@
 {% extends "layout/basic.html" %}
 {% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% load thumbnail %}
+
 
 {% block title %}Изменить объявление{% endblock %}
 
 {% block content %}
 
 <h2>Реактирование</h2>
-<form  method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	{% bootstrap_form form %}
+	{% for p in picture %}
+		{% comment %} <img src="{{ p.img|thumbnail_url:'default' }}" width="100">
+		<button type="button" class="btn btn-default btn-xs">X</button> {% endcomment %}
+		<div style="position: relative; left: 0; top: 0;">
+			<img src="{{ p.img|thumbnail_url:'default' }}" style="position: relative; top: 0; left: 0;"/>
+			<img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS4VbaLGoKcbJZuAMbe7t1Gixa0oqurMd07xiiL453GDB3kGVsa5C_4MQ" style="position: absolute; margin-top: 0px; margin-right: 0px;cursor:pointer;" width="20" height="20"/>
+		</div>
+	{% endfor %}
+	{{ formimg|crispy }}
 	<input type="submit" value="Изменить" class="btn btn-success">
 </form>
 {% endblock %}

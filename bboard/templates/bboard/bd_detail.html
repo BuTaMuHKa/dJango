@@ -6,7 +6,9 @@
 {% block content %}
 
 <div class="card mb-3">
-  <img  width="400" height="400" src="{{ bd.photo|thumbnail_url:'my_size' }}" class="img-thumbnail" alt="...">
+  {% for i in img %}
+    <img src="{{ i.img|thumbnail_url:'default' }}">
+  {% endfor %}
   <div class="card-body">
     <h5 class="card-title">{{ bd.title }}</h5>
     <p class="card-text">{{ bd.content }}</p>

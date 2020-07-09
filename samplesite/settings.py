@@ -39,20 +39,20 @@ MEDIA_URL = '/media/'
 #     return ':'.join([key_prefix, str(version), key])
 
 #Кэш
-CACHES = {
-    'default':{
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_table',
-        'TIMEOUT': 120,
-        'OPTION': {
-            'MAX_ENTRIES': 200
-        }
-    }
-    # 'special':{
-    #     'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
-    #     'LOCATION':'cache2',
-    # }
-}
+# CACHES = {
+#     'default':{
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'cache_table',
+#         'TIMEOUT': 120,
+#         'OPTION': {
+#             'MAX_ENTRIES': 200
+#         }
+#     }
+#     # 'special':{
+#     #     'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
+#     #     'LOCATION':'cache2',
+#     # }
+# }
 #Настройки почты
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = [
@@ -68,10 +68,10 @@ DEFAULT_FROM_EMAIL = [
 
 #Алиасы для вывода картинок бесполезная хрень
 THUMBNAIL_ALIASES = {
-    'bboard.Bd.photo': {
+    'bboard.Img.img': {
         'default': {
-            'size': (500, 300),
-            'crop': 'scale', 
+            'size': (350, 400),
+            'crop':'smart',
         },
         'my_size':{
             'size':(1000, 1200),

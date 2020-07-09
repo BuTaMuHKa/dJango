@@ -10,6 +10,7 @@
 	<form  action="{% url 'bboard:add' %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		{{ form|crispy }}
+		{{ formimg|crispy }}
 		<input type="submit" value="Создать" class="btn btn-success">
 	</form>
 </div>

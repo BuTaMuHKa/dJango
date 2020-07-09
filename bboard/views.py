@@ -11,38 +11,43 @@ from django.core.mail import EmailMessage, get_connection, send_mail, get_connec
 from django.template.loader import render_to_string
 from django.views.decorators.vary import vary_on_headers, vary_on_cookie
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from precise_bbcode.bbcode import get_parser
 from samplesite.settings import BASE_DIR
 from datetime import datetime
 import os
+import ipdb
 
 from .models import Bd, Rubric, Img, add_rubric
-from .forms import BdForm, RegisterForm, SearchForm
+from .forms import BdForm, RegisterForm, SearchForm, ImgForm
 CRITICAL = 50
 FILES_ROOT = os.path.join(BASE_DIR, 'files')
 
 #Главная страница с пагинаторомs
-@vary_on_cookie
+#@vary_on_cookie
 def index(request):
 	rubrics = Rubric.objects.all()
 	bds = Bd.objects.all()
+	bdp = set()
+	for e in bds:
+		i = Img.objects.filter(bd_id=e.pk).first()
+		print(i, 'Проверка фото')
+		bdp.add(i)
+	print(bdp, 'Набор set')
 	paginator = Paginator(bds, 10)
 	if 'page' in request.GET:
 		page_num = request.GET['page']
 	else:
 		page_num = 1
 	page = paginator.page(page_num)
-	searchf = SearchForm(request.POST)
 	if 'last_connection' in request.COOKIES:
 		visits = int(request.COOKIES['last_connection']) + 1
 	else:
 		visits = 1
-	context = {'rubrics':rubrics, 'page': page, 'bds': page.object_list, 'form': searchf, 'visits':visits}
+	context = {'rubrics':rubrics, 'img':bdp, 'page': page, 'bds': page.object_list, 'visits':visits}
 	response = HttpResponse(render(request, 'bboard/index.html', context))
 	response.set_cookie('last_connection', visits)
 	return response
-
-
 
 # Изменение/добавление/удаление рубрики
 def rubric(request):
@@ -74,23 +79,33 @@ def delete(request, pk):
 		return HttpResponseForbidden('У вас нет доступа к этой странице')
 
 #Изменение записи с посредством формы связаной с моделью
-def update(request, pk):
+def update(request, pk, *args, **kwargs):
 	rubrics = Rubric.objects.all()
 	if request.user.is_superuser or request.user.is_staff:
 		bd = Bd.objects.get(pk=pk)
+		picture = Img.objects.filter(bd_id=bd.pk)
 		if request.method == 'POST':
-			bdf = BdForm(request.POST, request.FILES, instance=bd)
-			if bdf.is_valid():
-				bdf.save()
+			bdf = BdForm(request.POST, instance=bd)
+			bdp = ImgForm(request.POST, request.FILES)
+			photo = picture
+			if bdf.is_valid() and bdp.is_valid():
+				id = bdf.save().pk
+				for f in request.FILES.getlist('img'):
+					img = Img()
+					img.bd = Bd(pk=bd.pk)
+					img.img = f
+					img.save()
 				messages.add_message(request, messages.SUCCESS, 'Обявление измнено успешно', extra_tags='first second')
 				return HttpResponseRedirect(reverse('bboard:by_rubric',
-					kwargs={'rubric_id': bdf.cleaned_data['rubric'].pk}, ))
+					kwargs={'rubric_id': bdf.cleaned_data['rubric'].pk}))
 			else:
-				context = {'form':bdf, 'rubrics':rubrics}
+				context = {'form':bdf,'picture':picture, 'formimg':bdp, 'rubrics':rubrics}
 				return render(request, 'bboard/bd_update.html', context)
 		else:
 			bdf = BdForm(instance=bd)
-			context = {'form':bdf, 'rubrics':rubrics}
+			bdp = ImgForm()
+			photo = picture
+			context = {'form':bdf,'picture':picture, 'formimg':bdp,'rubrics':rubrics}
 			return render(request, 'bboard/bd_update.html', context)
 	else:
 		return HttpResponseForbidden('У вас нет доступа')
@@ -98,17 +113,10 @@ def update(request, pk):
 #Самописный контроллер для отдельной записи
 def detail(request, pk):
 	bd = Bd.objects.get(pk=pk)
+	img = Img.objects.filter(bd_id=bd.pk)
+	print('проверка наличия объектов',img)
 	rubrics = Rubric.objects.all()
-	
-	# if 'last' in request.COOKIES:
-	# 	visits = int(request.COOKIES['last']) + 1
-	# else:
-	# 	visits = 1 
-	context = { 'bd':bd, 'rubrics':rubrics}
-	# response = HttpResponse(render(request, 'bboard/bd_detail.html', context))
-	# response.delete_cookie('last_connection')
-	# response.set_cookie('last', visits)
-
+	context = { 'bd':bd,'img':img, 'rubrics':rubrics}
 	return render(request, 'bboard/bd_detail.html', context)
 
 #Все рубрики
@@ -116,26 +124,37 @@ def by_rubric(request, rubric_id):
 	bds = Bd.objects.filter(rubric=rubric_id)
 	rubrics = Rubric.objects.order_by_bd_count()
 	current_rubric = Rubric.objects.get(pk=rubric_id)
-	context = {'bds': bds, 'rubrics': rubrics, 'current_rubric': current_rubric}
+	img = set()
+	for i in bds:
+		image = Img.objects.filter(bd_id=i.pk).first()
+		img.add(image)
+	context = {'bds': bds, 'rubrics': rubrics, 'img' : img, 'current_rubric': current_rubric}
 	return render(request, 'bboard/by_rubric.html', context)
 
 #Сохрание записи в базе данных 
 def add_and_save(request):
 	rubrics = Rubric.objects.all()
-	bd = Bd.objects.all()
 	if request.user.is_authenticated:
 		if request.method == 'POST':
-			bdf = BdForm(request.POST, request.FILES)  
-			if bdf.is_valid():
-				bdf.save()
+			bdf = BdForm(request.POST)
+			bdp = ImgForm(request.POST, request.FILES)
+			if bdf.is_valid() and bdp.is_valid():
+				id = bdf.save().pk
+				#parent = Bd.objects.get(pk=id)
+				for f in request.FILES.getlist('img'):
+					img = Img()
+					img.bd = Bd(pk=id)
+					img.img = f
+					img.save()
 				return HttpResponseRedirect(reverse('bboard:by_rubric',
 					kwargs={'rubric_id': bdf.cleaned_data['rubric'].pk}))
 			else:
-				contex = {'form':bdf, 'rubrics': rubrics}
+				contex = {'form':bdf, 'formimg':bdp, 'rubrics': rubrics}
 				return render(request, 'bboard/create.html', contex)
 		else:
 			bdf = BdForm
-			contex = {'form': bdf, 'rubrics': rubrics}
+			bdp = ImgForm
+			contex = {'form': bdf, 'formimg': bdp,'rubrics': rubrics}
 			return render(request, 'bboard/create.html', contex)
 	else:
 		return HttpResponseForbidden('У вас нет доступа')
@@ -158,19 +177,16 @@ def registerUser(request):
 
 #Поисковая система
 def search(request):
-	if request.method == 'POST' or request.method == 'GET':
-		sf = SearchForm(request.POST)
-		if sf.is_valid():
-			keyword = sf.cleaned_data['keyword']
-			bds = Bd.objects.filter(title = keyword)
-			context = {'bds': bds, 'form': sf}
-			return render(request, 'bboard/search_result.html', context)
-	else:
-		sf = SearchForm()
-		text = "Извините по вашему запросу ничего не найдено"
-	context = {'form': sf, 'text': text } 
-	return render(request, 'bboard/search.html', context)
-
+	if request.method == 'POST':
+		form = request.POST.get('search')
+		bds = Bd.objects.filter(title__istartswith=form.strip())
+		if not bds:
+			context = {'text': 'По вашему запросу ничего не найдено!'}
+		else:
+			context = {'bds': bds}
+		return render(request, 'bboard/search_result.html', context)
+	
+	
 #Вывод загружунных файлов
 def showfiles(request):
 	img = Img.objects.all()

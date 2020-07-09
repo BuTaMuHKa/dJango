@@ -4,6 +4,7 @@ from os.path import splitext
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import Signal
+from django.utils.safestring import mark_safe
 
 add_rubric = Signal(providing_args=['created','instance'])
 
@@ -11,9 +12,9 @@ def get_timestamp_path(instance, filename):
 	return '%s%s%s' % ('archives/%Y/%m/%d/', datetime.now().timestamp(), splitext(filename)[1])
 
 #Дополнение к модели User
-class Profile(models.Model):
-	phone = models.CharField(max_length = 12, verbose_name = 'Номер телефона')
-	user = models.OneToOneField(User, on_delete = models.CASCADE)
+# class Profile(models.Model):
+# 	phone = models.CharField(max_length = 12, verbose_name = 'Номер телефона')
+# 	user = models.OneToOneField(User, on_delete = models.CASCADE)
 
 #Дистпечер записей Рубрики
 class RubricManager(models.Manager):
@@ -44,7 +45,6 @@ class Bd(models.Model):
 	content = models.TextField(null=True, blank=True, verbose_name='Описание')
 	price = models.FloatField(null=True, blank=True, default=0, verbose_name='Цена')
 	published = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Опубликовано')
-	photo = models.ImageField(verbose_name='фото', upload_to= 'archives/%Y/%m/%d/')
 	rubric = models.ForeignKey('Rubric', null=True,
 		on_delete=models.CASCADE, verbose_name='Рубрика')
 	class Meta:
@@ -54,13 +54,13 @@ class Bd(models.Model):
 	objects = models.Manager()
 	reverse = BdManager()
 
-#Фото
+#Фото связанная с Bd как расширение изображений 
 class Img(models.Model):
-	img = models.ImageField(verbose_name='Изображение', upload_to = get_timestamp_path)
-	bd = models.ForeignKey('Bd', null=True, on_delete=models.PROTECT, verbose_name='Фото')
 	class Meta:
 		verbose_name = 'Изображение'
 		verbose_name_plural = 'Изображения'
+	img = models.ImageField(verbose_name='Изображение', null=False, help_text='150x150px', upload_to = 'archives/%Y/%m/%d/')
+	bd = models.OneToOneField(Bd, on_delete=models.CASCADE)
 
 #Файлы
 class File(models.Model):
@@ -70,6 +70,8 @@ class File(models.Model):
 		verbose_name = 'Файл'
 		verbose_name_plural = 'Файлы'
 
+
+#Сигналы обрпботки данных
 def post_save_dispatcher(sender, **kwargs):
 	if kwargs['created']:
 		#print(kwargs)
@@ -80,8 +82,8 @@ def post_delete_dispatcher(sender, **kwargs):
 	print('Запись "%s" была удалена' % kwargs['instance'].title)
 post_delete.connect(post_delete_dispatcher, sender=Bd)
 
-def add_rubric_dispatcher(sender, **kwargs):
-	if kwargs['created']:
-		print('Добавлена рубрика "%s"' % kwargs['instance'])
-		print(kwargs['instance'])
-add_rubric.connect(add_rubric_dispatcher, sender=Rubric)
+# def add_rubric_dispatcher(sender, **kwargs):
+# 	if kwargs['created']:
+# 		print('Добавлена рубрика "%s"' % kwargs['instance'])
+# 		print(kwargs['instance'])
+# add_rubric.connect(add_rubric_dispatcher, sender=Rubric)

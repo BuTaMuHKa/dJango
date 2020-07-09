@@ -1,34 +1,30 @@
 {% extends 'layout/basic.html' %}
-
+{% load thumbnail %}
 {% block title %}Результат поиска
 {% endblock title %}
 
 {% block content %}
 <ul>
-    <div>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Искать" class="btn btn-success">
-        </form>
-    </div>
-</ul>
-<ul><p>{{ text }}</p></ul>
-<ul>
-    <div>
-        {% for bd in bds %}
-            <div class="col-md-4">
-            <img src="">
+    <div>{% if bds %}
+            {% for bd in bds %}
+                <div class="col-md-4">
+                <img src="{{ bd.photo|thumbnail_url:'default' }}">
+                </div>
+                <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ bd.title }}</h5>
+                    <p class="card-text">{{ bd.content }}</p>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
+                    <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
+                </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if not bds  %}
+            <div class="alert alert-warning" role="alert">
+                {{ text }}
             </div>
-            <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title">{{ bd.title }}</h5>
-                <p class="card-text">{{ bd.content }}</p>
-                <h6 class="card-subtitle mb-2 text-muted">{{ bd.rubric}}</h6>
-                <a href="{% url 'bboard:detail' pk=bd.pk %}" class="card-link">Подробнее</a>
-            </div>
-            </div>
-        {% endfor %}
+        {% endif %}
     </div>
 </ul>
 {% endblock content %}
